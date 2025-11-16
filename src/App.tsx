@@ -36,13 +36,13 @@ function App() {
               endDate={endDate}
               height="100%"
               width="100%"
-              showNavigation={true}
+              showNavigation={false}
               theme={{
                 colors: {
                   background: '#ffffff',
                   gridLine: '#e0e0e0',
                   gridLinePrimary: '#9e9e9e',
-                  headerBackground: '#f5f5f5',
+                  headerBackground: '#ffffff',
                   headerText: '#333333',
                   headerBorder: '#d0d0d0',
                 },
