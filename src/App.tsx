@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { ThemeProvider, createTheme, CssBaseline, Container, Box, Stack, Typography, Paper, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent } from '@mui/material'
+import { ThemeProvider, createTheme, CssBaseline, Container, Box, Stack, Typography, Paper, FormControl, InputLabel, Select, MenuItem } from '@mui/material'
+import type { SelectChangeEvent } from '@mui/material/Select'
 import { TimelineCalendar, TimelineItem } from 'mq-timeline-calendar/react'
 import type { CalendarLocale } from 'mq-timeline-calendar/react'
 
