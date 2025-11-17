@@ -1,20 +1,8 @@
-import { useState } from 'react'
-import { ThemeProvider, createTheme, CssBaseline, Container, Box, Stack, Typography, Paper, FormControl, InputLabel, Select, MenuItem } from '@mui/material'
+import { useState, useMemo } from 'react'
+import { ThemeProvider, createTheme, CssBaseline, Container, Box, Stack, Typography, Paper, FormControl, InputLabel, Select, MenuItem, PaletteMode } from '@mui/material'
 import type { SelectChangeEvent } from '@mui/material/Select'
 import { TimelineCalendar, TimelineItem } from 'mq-timeline-calendar/react'
 import type { CalendarLocale } from 'mq-timeline-calendar/react'
-
-const theme = createTheme({
-  palette: {
-    mode: 'light',
-    primary: {
-      main: '#1976d2',
-    },
-    secondary: {
-      main: '#dc004e',
-    },
-  },
-})
 
 // Define available locales
 const locales: Record<string, CalendarLocale> = {
@@ -66,12 +54,34 @@ const locales: Record<string, CalendarLocale> = {
 }
 
 function App() {
-  // State for selected locale
+  // State for theme mode and selected locale
+  const [themeMode, setThemeMode] = useState<PaletteMode>('light')
   const [selectedLocale, setSelectedLocale] = useState<string>('en-US')
+
+  // Create theme based on mode
+  const theme = useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode: themeMode,
+          primary: {
+            main: '#1976d2',
+          },
+          secondary: {
+            main: '#dc004e',
+          },
+        },
+      }),
+    [themeMode]
+  )
 
   // Set up timeline date range - full year view
   const startDate = new Date(2025, 0, 1) // January 1, 2025
   const endDate = new Date(2025, 11, 31) // December 31, 2025
+
+  const handleThemeChange = (event: SelectChangeEvent) => {
+    setThemeMode(event.target.value as PaletteMode)
+  }
 
   const handleLocaleChange = (event: SelectChangeEvent) => {
     setSelectedLocale(event.target.value)
@@ -91,22 +101,37 @@ function App() {
                 Testing mq-timeline-calendar with Material-UI integration
               </Typography>
             </Box>
-            <FormControl sx={{ minWidth: 150 }}>
-              <InputLabel id="locale-select-label">Language</InputLabel>
-              <Select
-                labelId="locale-select-label"
-                id="locale-select"
-                value={selectedLocale}
-                label="Language"
-                onChange={handleLocaleChange}
-              >
-                <MenuItem value="en-US">English (US)</MenuItem>
-                <MenuItem value="fi-FI">Suomi (Finnish)</MenuItem>
-                <MenuItem value="es-ES">Español (Spanish)</MenuItem>
-                <MenuItem value="de-DE">Deutsch (German)</MenuItem>
-                <MenuItem value="fr-FR">Français (French)</MenuItem>
-              </Select>
-            </FormControl>
+            <Stack direction="row" spacing={2}>
+              <FormControl sx={{ minWidth: 120 }}>
+                <InputLabel id="theme-select-label">Theme</InputLabel>
+                <Select
+                  labelId="theme-select-label"
+                  id="theme-select"
+                  value={themeMode}
+                  label="Theme"
+                  onChange={handleThemeChange}
+                >
+                  <MenuItem value="light">Light</MenuItem>
+                  <MenuItem value="dark">Dark</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControl sx={{ minWidth: 150 }}>
+                <InputLabel id="locale-select-label">Language</InputLabel>
+                <Select
+                  labelId="locale-select-label"
+                  id="locale-select"
+                  value={selectedLocale}
+                  label="Language"
+                  onChange={handleLocaleChange}
+                >
+                  <MenuItem value="en-US">English (US)</MenuItem>
+                  <MenuItem value="fi-FI">Suomi (Finnish)</MenuItem>
+                  <MenuItem value="es-ES">Español (Spanish)</MenuItem>
+                  <MenuItem value="de-DE">Deutsch (German)</MenuItem>
+                  <MenuItem value="fr-FR">Français (French)</MenuItem>
+                </Select>
+              </FormControl>
+            </Stack>
           </Box>
 
           <Paper elevation={3} sx={{ mt: 4, p: 2, height: '600px' }}>
@@ -121,12 +146,12 @@ function App() {
               locale={locales[selectedLocale]}
               theme={{
                 colors: {
-                  background: '#ffffff',
-                  gridLine: '#e0e0e0',
-                  gridLinePrimary: '#9e9e9e',
-                  headerBackground: '#ffffff',
-                  headerText: '#333333',
-                  headerBorder: '#d0d0d0',
+                  background: themeMode === 'dark' ? '#121212' : '#ffffff',
+                  gridLine: themeMode === 'dark' ? '#424242' : '#e0e0e0',
+                  gridLinePrimary: themeMode === 'dark' ? '#616161' : '#9e9e9e',
+                  headerBackground: themeMode === 'dark' ? '#1e1e1e' : '#ffffff',
+                  headerText: themeMode === 'dark' ? '#e0e0e0' : '#333333',
+                  headerBorder: themeMode === 'dark' ? '#424242' : '#d0d0d0',
                 },
                 fonts: {
                   header: 'Roboto, sans-serif',
@@ -242,6 +267,7 @@ function App() {
               <li>Scroll horizontally with mouse wheel</li>
               <li>Zoom in/out with Ctrl/Cmd + Mouse wheel</li>
               <li>Multiple timeline items across different rows</li>
+              <li>Dark and light theme support with instant switching</li>
               <li>Localization support - switch between 5 languages</li>
               <li>Material-UI themed components</li>
               <li>Responsive and smooth animations</li>
