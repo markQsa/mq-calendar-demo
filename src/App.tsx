@@ -356,8 +356,9 @@ function App() {
               How to Navigate:
             </Typography>
             <Typography variant="body2" component="ul" sx={{ pl: 2 }}>
-              <li><strong>Scroll horizontally:</strong> Use mouse wheel or trackpad</li>
+              <li><strong>Scroll horizontally:</strong> Use mouse wheel or trackpad (hold Shift if page has vertical scroll)</li>
               <li><strong>Zoom in/out:</strong> Hold Ctrl (Windows) or Cmd (Mac) + mouse wheel</li>
+              <li><strong>Navigate by time:</strong> Click on time headers (day, week, month, etc.) to jump to that time period</li>
               <li><strong>Expand/collapse rows:</strong> Click on electrician names</li>
               <li><strong>View details:</strong> Hover over work order bars to see information</li>
             </Typography>
