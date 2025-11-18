@@ -21,227 +21,39 @@ import {
   TimelineItem,
   TimelineRowGroup,
   TimelineRow,
+  enUS,
+  deDE,
+  frFR,
+  esES,
+  itIT,
+  fiFI,
+  svSE,
+  noNO,
+  daDK,
+  nlNL,
+  ptPT,
+  plPL,
+  ruRU,
 } from "mq-timeline-calendar/react";
 import type { CalendarLocale } from "mq-timeline-calendar/react";
 import electriciansData from "./electricians-data.json";
+import { addDays } from "date-fns";
 
-// Define available locales
+// Use built-in locales from the library
 const locales: Record<string, CalendarLocale> = {
-  "en-US": {
-    monthsShort: [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ],
-    monthsFull: [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ],
-    weekdaysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-    weekdaysFull: [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-    ],
-    weekAbbr: "W",
-    am: "AM",
-    pm: "PM",
-  },
-  "fi-FI": {
-    monthsShort: [
-      "Tammi",
-      "Helmi",
-      "Maalis",
-      "Huhti",
-      "Touko",
-      "Kesä",
-      "Heinä",
-      "Elo",
-      "Syys",
-      "Loka",
-      "Marras",
-      "Joulu",
-    ],
-    monthsFull: [
-      "Tammikuu",
-      "Helmikuu",
-      "Maaliskuu",
-      "Huhtikuu",
-      "Toukokuu",
-      "Kesäkuu",
-      "Heinäkuu",
-      "Elokuu",
-      "Syyskuu",
-      "Lokakuu",
-      "Marraskuu",
-      "Joulukuu",
-    ],
-    weekdaysShort: ["Su", "Ma", "Ti", "Ke", "To", "Pe", "La"],
-    weekdaysFull: [
-      "Sunnuntai",
-      "Maanantai",
-      "Tiistai",
-      "Keskiviikko",
-      "Torstai",
-      "Perjantai",
-      "Lauantai",
-    ],
-    weekAbbr: "Vko",
-    am: "AM",
-    pm: "PM",
-  },
-  "es-ES": {
-    monthsShort: [
-      "Ene",
-      "Feb",
-      "Mar",
-      "Abr",
-      "May",
-      "Jun",
-      "Jul",
-      "Ago",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dic",
-    ],
-    monthsFull: [
-      "Enero",
-      "Febrero",
-      "Marzo",
-      "Abril",
-      "Mayo",
-      "Junio",
-      "Julio",
-      "Agosto",
-      "Septiembre",
-      "Octubre",
-      "Noviembre",
-      "Diciembre",
-    ],
-    weekdaysShort: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
-    weekdaysFull: [
-      "Domingo",
-      "Lunes",
-      "Martes",
-      "Miércoles",
-      "Jueves",
-      "Viernes",
-      "Sábado",
-    ],
-    weekAbbr: "S",
-    am: "AM",
-    pm: "PM",
-  },
-  "de-DE": {
-    monthsShort: [
-      "Jan",
-      "Feb",
-      "Mär",
-      "Apr",
-      "Mai",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Okt",
-      "Nov",
-      "Dez",
-    ],
-    monthsFull: [
-      "Januar",
-      "Februar",
-      "März",
-      "April",
-      "Mai",
-      "Juni",
-      "Juli",
-      "August",
-      "September",
-      "Oktober",
-      "November",
-      "Dezember",
-    ],
-    weekdaysShort: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
-    weekdaysFull: [
-      "Sonntag",
-      "Montag",
-      "Dienstag",
-      "Mittwoch",
-      "Donnerstag",
-      "Freitag",
-      "Samstag",
-    ],
-    weekAbbr: "W",
-    am: "AM",
-    pm: "PM",
-  },
-  "fr-FR": {
-    monthsShort: [
-      "Jan",
-      "Fév",
-      "Mar",
-      "Avr",
-      "Mai",
-      "Juin",
-      "Juil",
-      "Aoû",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Déc",
-    ],
-    monthsFull: [
-      "Janvier",
-      "Février",
-      "Mars",
-      "Avril",
-      "Mai",
-      "Juin",
-      "Juillet",
-      "Août",
-      "Septembre",
-      "Octobre",
-      "Novembre",
-      "Décembre",
-    ],
-    weekdaysShort: ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"],
-    weekdaysFull: [
-      "Dimanche",
-      "Lundi",
-      "Mardi",
-      "Mercredi",
-      "Jeudi",
-      "Vendredi",
-      "Samedi",
-    ],
-    weekAbbr: "S",
-    am: "AM",
-    pm: "PM",
-  },
+  "en-US": enUS,
+  "de-DE": deDE,
+  "fr-FR": frFR,
+  "es-ES": esES,
+  "it-IT": itIT,
+  "fi-FI": fiFI,
+  "sv-SE": svSE,
+  "no-NO": noNO,
+  "da-DK": daDK,
+  "nl-NL": nlNL,
+  "pt-PT": ptPT,
+  "pl-PL": plPL,
+  "ru-RU": ruRU,
 };
 
 function App() {
@@ -267,8 +79,26 @@ function App() {
   );
 
   // Set up timeline date range - from 2024 to 2026
-  const startDate = new Date(2024, 0, 1); // January 1, 2024
-  const endDate = new Date(2026, 11, 31); // December 31, 2026
+  const startDate = addDays(new Date(),  -14); // January 1, 2024
+  const endDate = new Date(); // December 31, 2026
+
+  // Define availability hours: 7:00-17:00 on weekdays (Mon-Fri)
+  const availabilityConfig = {
+    simple: {
+      weekdays: [{ start: "07:00", end: "17:00" }],
+      weekends: [], // No availability on weekends
+    },
+    availableStyle: {
+      backgroundColor: themeMode === "dark"
+        ? "rgba(76, 175, 80, 0.05)"
+        : "rgba(76, 175, 80, 0.03)",
+    },
+    unavailableStyle: {
+      backgroundColor: themeMode === "dark"
+        ? "rgba(0, 0, 0, 0.3)"
+        : "rgba(0, 0, 0, 0.05)",
+    },
+  };
 
   // Helper function to get work order style based on type
   const getWorkOrderStyle = (type: string) => {
@@ -288,6 +118,15 @@ function App() {
       default:
         return { bgcolor: themeMode === "dark" ? "#424242" : "#9e9e9e", label: "Other" };
     }
+  };
+
+  // Helper function for aggregated type styles (for aggregated view bars)
+  const getAggregatedTypeStyle = (type: string) => {
+    const style = getWorkOrderStyle(type);
+    return {
+      backgroundColor: style.bgcolor,
+      color: "white"
+    };
   };
 
   const handleThemeChange = (event: SelectChangeEvent) => {
@@ -320,7 +159,7 @@ function App() {
                 gutterBottom
                 color="text.secondary"
               >
-                Managing 10 electricians with work orders, vacations, and sick leaves (2024 - 2026)
+                Managing 10 electricians with work orders, vacations, and sick leaves
               </Typography>
             </Box>
             <Stack direction="row" spacing={2}>
@@ -347,10 +186,18 @@ function App() {
                   onChange={handleLocaleChange}
                 >
                   <MenuItem value="en-US">English (US)</MenuItem>
-                  <MenuItem value="fi-FI">Suomi (Finnish)</MenuItem>
-                  <MenuItem value="es-ES">Español (Spanish)</MenuItem>
                   <MenuItem value="de-DE">Deutsch (German)</MenuItem>
                   <MenuItem value="fr-FR">Français (French)</MenuItem>
+                  <MenuItem value="es-ES">Español (Spanish)</MenuItem>
+                  <MenuItem value="it-IT">Italiano (Italian)</MenuItem>
+                  <MenuItem value="fi-FI">Suomi (Finnish)</MenuItem>
+                  <MenuItem value="sv-SE">Svenska (Swedish)</MenuItem>
+                  <MenuItem value="no-NO">Norsk (Norwegian)</MenuItem>
+                  <MenuItem value="da-DK">Dansk (Danish)</MenuItem>
+                  <MenuItem value="nl-NL">Nederlands (Dutch)</MenuItem>
+                  <MenuItem value="pt-PT">Português (Portuguese)</MenuItem>
+                  <MenuItem value="pl-PL">Polski (Polish)</MenuItem>
+                  <MenuItem value="ru-RU">Русский (Russian)</MenuItem>
                 </Select>
               </FormControl>
             </Stack>
@@ -364,8 +211,8 @@ function App() {
               startDate={startDate}
               endDate={endDate}
               height="100%"
-              minZoom="1000 years" // Maximum time span to display
-              maxZoom="100 milliseconds" // Minimum time span to display
+              minZoom="12 months" // Maximum time span to display
+              maxZoom="3 hours" // Minimum time span to display
               width="100%"
               styles={{
                 root: {
@@ -377,6 +224,7 @@ function App() {
               showCurrentTime={true}
               showNavigation={false}
               locale={locales[selectedLocale]}
+              availability={availabilityConfig}
               theme={{
                 colors: {
                   background: themeMode === "dark" ? "#121212" : "#ffffff",
@@ -409,6 +257,13 @@ function App() {
                     rowCount={1}
                     collapsible={true}
                     defaultExpanded={true}
+                    aggregation={{
+                      enabled: true,
+                      threshold: "6 months",
+                      granularity: "dynamic",
+                      minItemsForAggregation: 50
+                    }}
+                    getAggregatedTypeStyle={getAggregatedTypeStyle}
                   >
                     {electriciansData.workOrders
                       .filter((order) => order.electricianId === electrician.id)
@@ -420,6 +275,7 @@ function App() {
                             startTime={order.startTime}
                             duration={order.duration}
                             row={0}
+                            type={order.type}
                           >
                             <Box
                               sx={{
@@ -507,11 +363,12 @@ function App() {
               <li>Realistic scheduling: primarily weekdays 7-17, some weekend work</li>
               <li>33 vacation periods and 16 sick leaves across all staff</li>
               <li>No work scheduled during vacation or sick leave periods</li>
+              <li>Visual availability hours: 7:00-17:00 on weekdays (Mon-Fri)</li>
               <li>Scroll horizontally with mouse wheel</li>
               <li>Zoom in/out with Ctrl/Cmd + Mouse wheel</li>
               <li>Collapsible rows for each electrician</li>
               <li>Dark and light theme support</li>
-              <li>Multi-language support (5 languages)</li>
+              <li>Multi-language support (13 languages)</li>
             </Typography>
           </Box>
         </Box>
