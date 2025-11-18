@@ -501,11 +501,12 @@ function App() {
             </Typography>
             <Typography variant="body2" component="ul" sx={{ pl: 2 }}>
               <li>10 electricians with individual work schedules</li>
-              <li>2,800+ work orders spanning 3 years (2024-2026)</li>
-              <li>Constant workload: 8-12 orders per month per electrician</li>
+              <li>10,300+ work orders spanning 3 years (2024-2026)</li>
+              <li>Constant workload: minimum 3 days per week per electrician</li>
               <li>Multiple order types: Installation, Repair, Maintenance, Emergency</li>
               <li>Realistic scheduling: primarily weekdays 7-17, some weekend work</li>
-              <li>Vacation and sick leave tracking throughout the year</li>
+              <li>33 vacation periods and 16 sick leaves across all staff</li>
+              <li>No work scheduled during vacation or sick leave periods</li>
               <li>Scroll horizontally with mouse wheel</li>
               <li>Zoom in/out with Ctrl/Cmd + Mouse wheel</li>
               <li>Collapsible rows for each electrician</li>
