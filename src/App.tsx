@@ -266,9 +266,9 @@ function App() {
     [themeMode]
   );
 
-  // Set up timeline date range - from 2024 to May 2025
+  // Set up timeline date range - from 2024 to 2026
   const startDate = new Date(2024, 0, 1); // January 1, 2024
-  const endDate = new Date(2025, 4, 31); // May 31, 2025
+  const endDate = new Date(2026, 11, 31); // December 31, 2026
 
   // Helper function to get work order style based on type
   const getWorkOrderStyle = (type: string) => {
@@ -320,7 +320,7 @@ function App() {
                 gutterBottom
                 color="text.secondary"
               >
-                Managing 10 electricians with work orders, vacations, and sick leaves (2024 - May 2025)
+                Managing 10 electricians with work orders, vacations, and sick leaves (2024 - 2026)
               </Typography>
             </Box>
             <Stack direction="row" spacing={2}>
@@ -501,9 +501,11 @@ function App() {
             </Typography>
             <Typography variant="body2" component="ul" sx={{ pl: 2 }}>
               <li>10 electricians with individual work schedules</li>
-              <li>Work orders from January 2024 to May 2025</li>
+              <li>2,800+ work orders spanning 3 years (2024-2026)</li>
+              <li>Constant workload: 8-12 orders per month per electrician</li>
               <li>Multiple order types: Installation, Repair, Maintenance, Emergency</li>
-              <li>Vacation and sick leave tracking</li>
+              <li>Realistic scheduling: primarily weekdays 7-17, some weekend work</li>
+              <li>Vacation and sick leave tracking throughout the year</li>
               <li>Scroll horizontally with mouse wheel</li>
               <li>Zoom in/out with Ctrl/Cmd + Mouse wheel</li>
               <li>Collapsible rows for each electrician</li>
