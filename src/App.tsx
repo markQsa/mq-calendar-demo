@@ -353,19 +353,28 @@ function App() {
 
           <Box sx={{ mt: 3 }}>
             <Typography variant="h6" gutterBottom>
+              How to Navigate:
+            </Typography>
+            <Typography variant="body2" component="ul" sx={{ pl: 2 }}>
+              <li><strong>Scroll horizontally:</strong> Use mouse wheel or trackpad</li>
+              <li><strong>Zoom in/out:</strong> Hold Ctrl (Windows) or Cmd (Mac) + mouse wheel</li>
+              <li><strong>Expand/collapse rows:</strong> Click on electrician names</li>
+              <li><strong>View details:</strong> Hover over work order bars to see information</li>
+            </Typography>
+          </Box>
+
+          <Box sx={{ mt: 3 }}>
+            <Typography variant="h6" gutterBottom>
               Features:
             </Typography>
             <Typography variant="body2" component="ul" sx={{ pl: 2 }}>
               <li>10 electricians with individual work schedules</li>
               <li>10,300+ work orders spanning 3 years (2024-2026)</li>
-              <li>Constant workload: minimum 3 days per week per electrician</li>
+              <li>Smart aggregation: Switches to summary view when viewing 2+ months</li>
               <li>Multiple order types: Installation, Repair, Maintenance, Emergency</li>
               <li>Realistic scheduling: primarily weekdays 7-17, some weekend work</li>
               <li>33 vacation periods and 16 sick leaves across all staff</li>
-              <li>No work scheduled during vacation or sick leave periods</li>
               <li>Visual availability hours: 7:00-17:00 on weekdays (Mon-Fri)</li>
-              <li>Scroll horizontally with mouse wheel</li>
-              <li>Zoom in/out with Ctrl/Cmd + Mouse wheel</li>
               <li>Collapsible rows for each electrician</li>
               <li>Dark and light theme support</li>
               <li>Multi-language support (13 languages)</li>
