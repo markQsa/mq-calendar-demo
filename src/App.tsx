@@ -12,6 +12,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Chip,
 } from "@mui/material";
 import type { SelectChangeEvent } from "@mui/material/Select";
 import type { PaletteMode } from "@mui/material";
@@ -22,6 +23,7 @@ import {
   TimelineRow,
 } from "mq-timeline-calendar/react";
 import type { CalendarLocale } from "mq-timeline-calendar/react";
+import electriciansData from "./electricians-data.json";
 
 // Define available locales
 const locales: Record<string, CalendarLocale> = {
@@ -264,9 +266,29 @@ function App() {
     [themeMode]
   );
 
-  // Set up timeline date range - full year view
-  const startDate = new Date(2025, 0, 1); // January 1, 2025
-  const endDate = new Date(2025, 11, 31); // December 31, 2025
+  // Set up timeline date range - from 2024 to May 2025
+  const startDate = new Date(2024, 0, 1); // January 1, 2024
+  const endDate = new Date(2025, 4, 31); // May 31, 2025
+
+  // Helper function to get work order style based on type
+  const getWorkOrderStyle = (type: string) => {
+    switch (type) {
+      case "installation":
+        return { bgcolor: themeMode === "dark" ? "#1565c0" : "#1976d2", label: "Installation" };
+      case "repair":
+        return { bgcolor: themeMode === "dark" ? "#c62828" : "#d32f2f", label: "Repair" };
+      case "maintenance":
+        return { bgcolor: themeMode === "dark" ? "#2e7d32" : "#388e3c", label: "Maintenance" };
+      case "emergency":
+        return { bgcolor: themeMode === "dark" ? "#d84315" : "#e64a19", label: "Emergency" };
+      case "vacation":
+        return { bgcolor: themeMode === "dark" ? "#7b1fa2" : "#9c27b0", label: "Vacation" };
+      case "sick":
+        return { bgcolor: themeMode === "dark" ? "#616161" : "#757575", label: "Sick Leave" };
+      default:
+        return { bgcolor: themeMode === "dark" ? "#424242" : "#9e9e9e", label: "Other" };
+    }
+  };
 
   const handleThemeChange = (event: SelectChangeEvent) => {
     setThemeMode(event.target.value as PaletteMode);
@@ -291,14 +313,14 @@ function App() {
           >
             <Box>
               <Typography variant="h3" component="h1" gutterBottom>
-                Timeline Calendar Demo
+                Electricians Work Order Schedule
               </Typography>
               <Typography
                 variant="subtitle1"
                 gutterBottom
                 color="text.secondary"
               >
-                Testing mq-timeline-calendar with Material-UI integration
+                Managing 10 electricians with work orders, vacations, and sick leaves (2024 - May 2025)
               </Typography>
             </Box>
             <Stack direction="row" spacing={2}>
@@ -379,151 +401,114 @@ function App() {
               }}
             >
               <TimelineRowGroup>
-                <TimelineRow
-                  id="line-a"
-                  label="Row 1"
-                  rowCount={1}
-                  collapsible={true}
-                  defaultExpanded={true}
-                >
-                  <TimelineItem
-                    startTime="2025-11-18 08:00"
-                    duration="18 hours"
-                    row={0}
+                {electriciansData.electricians.map((electrician) => (
+                  <TimelineRow
+                    key={electrician.id}
+                    id={`electrician-${electrician.id}`}
+                    label={electrician.name}
+                    rowCount={1}
+                    collapsible={true}
+                    defaultExpanded={true}
                   >
-                    <Box
-                      sx={{
-                        bgcolor: "primary.main",
-                        color: "white",
-                        p: 1,
-                        borderRadius: 1,
-                        overflow: "hidden",
-                        height: "100%",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Typography variant="body2">Task 1</Typography>
-                    </Box>
-                  </TimelineItem>
-
-                  <TimelineItem
-                    startTime="2025-11-19 09:00"
-                    duration="18 hours"
-                    row={0}
-                  >
-                    <Box
-                      sx={{
-                        bgcolor: "success.main",
-                        color: "white",
-                        p: 1,
-                        borderRadius: 1,
-                        overflow: "hidden",
-                        height: "100%",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Typography variant="body2">Task 2</Typography>
-                    </Box>
-                  </TimelineItem>
-                  <TimelineItem
-                    startTime="2025-11-20 10:00"
-                    duration="18 hours"
-                    row={0}
-                  >
-                    <Box
-                      sx={{
-                        bgcolor: "success.main",
-                        color: "white",
-                        p: 1,
-                        borderRadius: 1,
-                        overflow: "hidden",
-                        height: "100%",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Typography variant="body2">Task 2</Typography>
-                    </Box>
-                  </TimelineItem>
-                  <TimelineItem
-                    startTime="2025-11-21 11:00"
-                    duration="22 hours"
-                    row={0}
-                  >
-                    <Box
-                      sx={{
-                        bgcolor: "success.main",
-                        color: "white",
-                        p: 1,
-                        borderRadius: 1,
-                        overflow: "hidden",
-                        height: "100%",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Typography variant="body2">Task 2</Typography>
-                    </Box>
-                  </TimelineItem>
-                  <TimelineItem
-                    startTime="2025-11-22 12:00"
-                    duration="6 hours"
-                    row={0}
-                  >
-                    <Box
-                      sx={{
-                        bgcolor: "success.main",
-                        color: "white",
-                        p: 1,
-                        borderRadius: 1,
-                        overflow: "hidden",
-                        height: "100%",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Typography variant="body2">Task 2</Typography>
-                    </Box>
-                  </TimelineItem>
-                  <TimelineItem
-                    startTime="2025-11-22 22:00"
-                    duration="12 hours"
-                    row={0}
-                  >
-                    <Box
-                      sx={{
-                        bgcolor: "success.main",
-                        color: "white",
-                        p: 1,
-                        borderRadius: 1,
-                        overflow: "hidden",
-                        height: "100%",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Typography variant="body2">Task 2</Typography>
-                    </Box>
-                  </TimelineItem>
-                </TimelineRow>
+                    {electriciansData.workOrders
+                      .filter((order) => order.electricianId === electrician.id)
+                      .map((order) => {
+                        const style = getWorkOrderStyle(order.type);
+                        return (
+                          <TimelineItem
+                            key={order.id}
+                            startTime={order.startTime}
+                            duration={order.duration}
+                            row={0}
+                          >
+                            <Box
+                              sx={{
+                                bgcolor: style.bgcolor,
+                                color: "white",
+                                p: 1,
+                                borderRadius: 1,
+                                overflow: "hidden",
+                                height: "100%",
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "center",
+                                cursor: "pointer",
+                                "&:hover": {
+                                  opacity: 0.9,
+                                },
+                              }}
+                              title={`${order.title}\n${order.location || ""}\n${order.id}`}
+                            >
+                              <Typography variant="caption" fontWeight="bold" noWrap>
+                                {order.title}
+                              </Typography>
+                              {order.location && (
+                                <Typography variant="caption" noWrap sx={{ opacity: 0.9 }}>
+                                  {order.location}
+                                </Typography>
+                              )}
+                            </Box>
+                          </TimelineItem>
+                        );
+                      })}
+                  </TimelineRow>
+                ))}
               </TimelineRowGroup>
             </TimelineCalendar>
           </Paper>
 
           <Box sx={{ mt: 3 }}>
             <Typography variant="h6" gutterBottom>
+              Work Order Legend:
+            </Typography>
+            <Stack direction="row" spacing={1} flexWrap="wrap" gap={1}>
+              <Chip
+                label="Installation"
+                sx={{ bgcolor: "#1976d2", color: "white" }}
+                size="small"
+              />
+              <Chip
+                label="Repair"
+                sx={{ bgcolor: "#d32f2f", color: "white" }}
+                size="small"
+              />
+              <Chip
+                label="Maintenance"
+                sx={{ bgcolor: "#388e3c", color: "white" }}
+                size="small"
+              />
+              <Chip
+                label="Emergency"
+                sx={{ bgcolor: "#e64a19", color: "white" }}
+                size="small"
+              />
+              <Chip
+                label="Vacation"
+                sx={{ bgcolor: "#9c27b0", color: "white" }}
+                size="small"
+              />
+              <Chip
+                label="Sick Leave"
+                sx={{ bgcolor: "#757575", color: "white" }}
+                size="small"
+              />
+            </Stack>
+          </Box>
+
+          <Box sx={{ mt: 3 }}>
+            <Typography variant="h6" gutterBottom>
               Features:
             </Typography>
             <Typography variant="body2" component="ul" sx={{ pl: 2 }}>
+              <li>10 electricians with individual work schedules</li>
+              <li>Work orders from January 2024 to May 2025</li>
+              <li>Multiple order types: Installation, Repair, Maintenance, Emergency</li>
+              <li>Vacation and sick leave tracking</li>
               <li>Scroll horizontally with mouse wheel</li>
               <li>Zoom in/out with Ctrl/Cmd + Mouse wheel</li>
-              <li>Multiple timeline items across different rows</li>
-              <li>Dark and light theme support with instant switching</li>
-              <li>Localization support - switch between 5 languages</li>
-              <li>Material-UI themed components</li>
-              <li>Responsive and smooth animations</li>
+              <li>Collapsible rows for each electrician</li>
+              <li>Dark and light theme support</li>
+              <li>Multi-language support (5 languages)</li>
             </Typography>
           </Box>
         </Box>
