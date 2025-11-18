@@ -15,7 +15,7 @@
     "@mui/icons-material": "^7.3.5",
     "@mui/material": "^7.3.5",
     "date-fns": "4.1.0",
-    "mq-timeline-calendar": "^0.1.0-beta.18",
+    "mq-timeline-calendar": "file:../../mq-components",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

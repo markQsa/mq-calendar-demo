@@ -211,7 +211,7 @@ function App() {
               startDate={startDate}
               endDate={endDate}
               height="100%"
-              minZoom="12 months" // Maximum time span to display
+              minZoom="5 years" // Maximum time span to display
               maxZoom="3 hours" // Minimum time span to display
               width="100%"
               styles={{
@@ -259,7 +259,7 @@ function App() {
                     defaultExpanded={true}
                     aggregation={{
                       enabled: true,
-                      threshold: "6 months",
+                      threshold: "2 months",
                       granularity: "dynamic",
                       minItemsForAggregation: 50
                     }}
