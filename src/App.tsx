@@ -697,14 +697,10 @@ const MetricsDisplay: React.FC<{
   if (zoomLevel === 'week' || zoomLevel === 'day') {
     if (timeContext === 'future') {
       return (
-        <Box sx={{ fontSize: '0.6rem', color: 'text.secondary', bgcolor: bgColor, px: 0.5, py: 0.15, borderRadius: 0.5, display: 'flex', flexDirection: 'column', gap: 0.15 }}>
-          <Box>
-            {labels.scheduled} {metrics.viewportHours}h | {labels.available} {metrics.viewportFreeHours}h
-            {metrics.isOverloaded && <span style={{ color: 'red' }}> ⚠ {labels.utilization} {metrics.viewportUtilization}%</span>}
-          </Box>
-          {metrics.nextFreeSlot && (
-            <Box>{labels.nextFree}: {format(metrics.nextFreeSlot, 'dd.MM HH:mm')}</Box>
-          )}
+        <Box sx={{ fontSize: '0.6rem', color: 'text.secondary', bgcolor: bgColor, px: 0.5, py: 0.15, borderRadius: 0.5 }}>
+          {labels.scheduled} {metrics.viewportHours}h | {labels.available} {metrics.viewportFreeHours}h
+          {metrics.isOverloaded && <span style={{ color: 'red' }}> ⚠ {labels.utilization} {metrics.viewportUtilization}%</span>}
+          {metrics.nextFreeSlot && <span> | {labels.nextFree}: {format(metrics.nextFreeSlot, 'dd.MM HH:mm')}</span>}
         </Box>
       );
     } else if (timeContext === 'past') {
@@ -716,11 +712,9 @@ const MetricsDisplay: React.FC<{
     } else {
       // Mixed: showing both past and future
       return (
-        <Box sx={{ fontSize: '0.6rem', color: 'text.secondary', bgcolor: bgColor, px: 0.5, py: 0.15, borderRadius: 0.5, display: 'flex', flexDirection: 'column', gap: 0.15 }}>
-          <Box>{labels.completed} {metrics.pastHours}h | {labels.upcoming} {metrics.futureHours}h</Box>
-          {metrics.nextFreeSlot && (
-            <Box>{labels.nextFree}: {format(metrics.nextFreeSlot, 'dd.MM HH:mm')}</Box>
-          )}
+        <Box sx={{ fontSize: '0.6rem', color: 'text.secondary', bgcolor: bgColor, px: 0.5, py: 0.15, borderRadius: 0.5 }}>
+          {labels.completed} {metrics.pastHours}h | {labels.upcoming} {metrics.futureHours}h
+          {metrics.nextFreeSlot && <span> | {labels.nextFree}: {format(metrics.nextFreeSlot, 'dd.MM HH:mm')}</span>}
         </Box>
       );
     }
