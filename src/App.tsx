@@ -14,14 +14,23 @@ import {
   MenuItem,
   Chip,
   Avatar,
+  Tooltip,
 } from "@mui/material";
 import type { SelectChangeEvent } from "@mui/material/Select";
 import type { PaletteMode } from "@mui/material";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import WarningIcon from "@mui/icons-material/Warning";
+import InfoIcon from "@mui/icons-material/Info";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ErrorIcon from "@mui/icons-material/Error";
+import AnnouncementIcon from "@mui/icons-material/Announcement";
 import {
   TimelineCalendar,
   TimelineItem,
   TimelineRowGroup,
   TimelineRow,
+  TimelinePinpoint,
+  TimelinePinpointGroup,
   enUS,
   deDE,
   frFR,
@@ -38,6 +47,8 @@ import {
 } from "mq-timeline-calendar/react";
 import type { CalendarLocale } from "mq-timeline-calendar/react";
 import electriciansData from "./electricians-data.json";
+import notificationsData from "./notifications-data.json";
+import logo from "./assets/logo.svg";
 import { addDays, differenceInDays, differenceInCalendarDays, format } from "date-fns";
 
 // TypeScript types and interfaces
@@ -89,6 +100,16 @@ const locales: Record<string, CalendarLocale> = {
   "pt-PT": ptPT,
   "pl-PL": plPL,
   "ru-RU": ruRU,
+};
+
+// Notification types mapping with icons and colors
+const notificationTypesMap: Record<string, { icon: typeof NotificationsIcon; color: string; label: string }> = {
+  notification: { icon: NotificationsIcon, color: "#2196f3", label: "General Notification" },
+  warning: { icon: WarningIcon, color: "#ff9800", label: "Warning" },
+  info: { icon: InfoIcon, color: "#03a9f4", label: "Information" },
+  success: { icon: CheckCircleIcon, color: "#4caf50", label: "Success" },
+  error: { icon: ErrorIcon, color: "#f44336", label: "Error" },
+  announcement: { icon: AnnouncementIcon, color: "#9c27b0", label: "Announcement" },
 };
 
 // Localized metrics labels
@@ -603,28 +624,6 @@ const findNextFreeSlot = (
   return null; // No free slots found
 };
 
-// Helper function to get work type label in Finnish
-const getWorkTypeLabel = (type: string): string => {
-  switch (type) {
-    case 'installation': return 'Asennuksia';
-    case 'repair': return 'Korjauksia';
-    case 'maintenance': return 'Huoltoja';
-    case 'emergency': return 'Hätätöitä';
-    default: return type;
-  }
-};
-
-// Helper function to get work type abbreviation
-const getWorkTypeAbbr = (type: string): string => {
-  switch (type) {
-    case 'installation': return 'A';
-    case 'repair': return 'K';
-    case 'maintenance': return 'H';
-    case 'emergency': return 'Hä';
-    default: return type.substring(0, 1).toUpperCase();
-  }
-};
-
 // Helper function to get utilization color
 const getUtilizationColor = (percent: number, themeMode: PaletteMode): string => {
   if (percent >= 80) return themeMode === 'dark' ? 'rgba(76, 175, 80, 0.15)' : 'rgba(76, 175, 80, 0.1)';
@@ -760,9 +759,9 @@ function App() {
     [themeMode]
   );
 
-  // Set up timeline date range - from 2024 to 2026
-  const startDate = new Date('2024-01-01');
-  const endDate = new Date('2026-12-31');
+  // Set up timeline date range - memoized to prevent re-creation on every render
+  const startDate = useMemo(() => addDays(new Date(), -9), []);
+  const endDate = useMemo(() => addDays(new Date(), 1), []);
 
   // Calculate metrics for all electricians
   useEffect(() => {
@@ -870,17 +869,28 @@ function App() {
               mb: 2,
             }}
           >
-            <Box>
-              <Typography variant="h3" component="h1" gutterBottom>
-                Electricians Work Order Schedule
-              </Typography>
-              <Typography
-                variant="subtitle1"
-                gutterBottom
-                color="text.secondary"
-              >
-                Managing 10 electricians with work orders, vacations, and sick leaves
-              </Typography>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+              <Box
+                component="img"
+                src={logo}
+                alt="MQ Timeline Calendar Logo"
+                sx={{
+                  width: 80,
+                  height: 80,
+                  flexShrink: 0,
+                }}
+              />
+              <Box>
+                <Typography variant="h4" component="h1">
+                  Electricians Work Order Schedule
+                </Typography>
+                <Typography
+                  variant="subtitle1"
+                  color="text.secondary"
+                >
+                  Managing 10 electricians with work orders, vacations, and sick leaves (2024-2026)
+                </Typography>
+              </Box>
             </Box>
             <Stack direction="row" spacing={2}>
               <FormControl sx={{ minWidth: 120 }}>
@@ -943,6 +953,7 @@ function App() {
               }}
               showCurrentTime={true}
               showNavigation={false}
+              currentTimeLineWidth={1}
               locale={locales[selectedLocale]}
               availability={availabilityConfig}
               theme={{
@@ -972,6 +983,74 @@ function App() {
               }}
             >
               <TimelineRowGroup>
+                {/* Notification Row */}
+                <TimelineRow
+                  id="notifications"
+                  label=""
+                  rowCount={1}
+                  collapsible={false}
+                >
+                  <TimelinePinpointGroup clusterSize={32} pinpointLineLength={40} row={0}>
+                    {notificationsData.notifications.map((notification) => {
+                      const typeInfo = notificationTypesMap[notification.type];
+                      const IconComponent = typeInfo.icon;
+                      return (
+                        <TimelinePinpoint
+                          key={notification.id}
+                          id={notification.id}
+                          time={notification.time}
+                          color={typeInfo.color}
+                          size={32}
+                          lineLength={40}
+                          alignment="top"
+                          onClick={(timestamp, data) => {
+                            console.log("Notification clicked:", data);
+                          }}
+                          data={notification}
+                        >
+                          <Tooltip
+                            title={
+                              <Box>
+                                <Typography variant="caption" fontWeight="bold">
+                                  {typeInfo.label}
+                                </Typography>
+                                <Typography variant="caption" display="block">
+                                  {notification.message}
+                                </Typography>
+                              </Box>
+                            }
+                            arrow
+                          >
+                            <Box
+                              sx={{
+                                width: "100%",
+                                height: "100%",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                backgroundColor: typeInfo.color,
+                                borderRadius: "50%",
+                                cursor: "pointer",
+                                "&:hover": {
+                                  transform: "scale(1.1)",
+                                  transition: "transform 0.2s",
+                                },
+                              }}
+                            >
+                              <IconComponent
+                                sx={{
+                                  color: "white",
+                                  fontSize: 18,
+                                }}
+                              />
+                            </Box>
+                          </Tooltip>
+                        </TimelinePinpoint>
+                      );
+                    })}
+                  </TimelinePinpointGroup>
+                </TimelineRow>
+
                 {electriciansData.electricians.map((electrician) => (
                   <TimelineRow
                     key={electrician.id}
@@ -1002,6 +1081,7 @@ function App() {
                       </Box>
                     }
                     rowCount={1}
+
                     collapsible={true}
                     defaultExpanded={true}
                     aggregation={{
@@ -1022,6 +1102,7 @@ function App() {
                             startTime={order.startTime}
                             duration={order.duration}
                             row={0}
+                            draggable={true}
                             type={order.type}
                           >
                             <Box
@@ -1127,6 +1208,9 @@ function App() {
               <li>Circular avatars: Color-coded with initials for each electrician</li>
               <li>Zoom-adaptive metrics: Shows different information density based on zoom level (year/month/week/day)</li>
               <li>Viewport-aware analytics: Displays past performance (completed hours, utilization) or future planning (scheduled hours, available capacity, next free slots) based on viewed time period</li>
+              <li>Notification pinpoints: {notificationsData.notifications.length} notifications with 6 different icon types</li>
+              <li>Interactive notifications with tooltips and click events</li>
+              <li>Automatic clustering of notifications when zoomed out</li>
               <li>Dark and light theme support</li>
               <li>Multi-language support (13 languages)</li>
             </Typography>
