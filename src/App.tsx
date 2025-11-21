@@ -13,14 +13,23 @@ import {
   Select,
   MenuItem,
   Chip,
+  Tooltip,
 } from "@mui/material";
 import type { SelectChangeEvent } from "@mui/material/Select";
 import type { PaletteMode } from "@mui/material";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import WarningIcon from "@mui/icons-material/Warning";
+import InfoIcon from "@mui/icons-material/Info";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ErrorIcon from "@mui/icons-material/Error";
+import AnnouncementIcon from "@mui/icons-material/Announcement";
 import {
   TimelineCalendar,
   TimelineItem,
   TimelineRowGroup,
   TimelineRow,
+  TimelinePinpoint,
+  TimelinePinpointGroup,
   enUS,
   deDE,
   frFR,
@@ -37,7 +46,8 @@ import {
 } from "mq-timeline-calendar/react";
 import type { CalendarLocale } from "mq-timeline-calendar/react";
 import electriciansData from "./electricians-data.json";
-import { addDays } from "date-fns";
+import notificationsData from "./notifications-data.json";
+import logo from "./assets/logo.svg";
 
 // Use built-in locales from the library
 const locales: Record<string, CalendarLocale> = {
@@ -54,6 +64,16 @@ const locales: Record<string, CalendarLocale> = {
   "pt-PT": ptPT,
   "pl-PL": plPL,
   "ru-RU": ruRU,
+};
+
+// Notification types mapping with icons and colors
+const notificationTypesMap: Record<string, { icon: typeof NotificationsIcon; color: string; label: string }> = {
+  notification: { icon: NotificationsIcon, color: "#2196f3", label: "General Notification" },
+  warning: { icon: WarningIcon, color: "#ff9800", label: "Warning" },
+  info: { icon: InfoIcon, color: "#03a9f4", label: "Information" },
+  success: { icon: CheckCircleIcon, color: "#4caf50", label: "Success" },
+  error: { icon: ErrorIcon, color: "#f44336", label: "Error" },
+  announcement: { icon: AnnouncementIcon, color: "#9c27b0", label: "Announcement" },
 };
 
 function App() {
@@ -78,9 +98,9 @@ function App() {
     [themeMode]
   );
 
-  // Set up timeline date range - from 2024 to 2026
-  const startDate = addDays(new Date(),  -14); // January 1, 2024
-  const endDate = new Date(); // December 31, 2026
+  // Set up timeline date range - memoized to prevent re-creation on every render
+  const startDate = useMemo(() => new Date(2024, 0, 1), []);
+  const endDate = useMemo(() => new Date(2026, 11, 31), []);
 
   // Define availability hours: 7:00-17:00 on weekdays (Mon-Fri)
   const availabilityConfig = {
@@ -150,17 +170,28 @@ function App() {
               mb: 2,
             }}
           >
-            <Box>
-              <Typography variant="h3" component="h1" gutterBottom>
-                Electricians Work Order Schedule
-              </Typography>
-              <Typography
-                variant="subtitle1"
-                gutterBottom
-                color="text.secondary"
-              >
-                Managing 10 electricians with work orders, vacations, and sick leaves
-              </Typography>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+              <Box
+                component="img"
+                src={logo}
+                alt="MQ Timeline Calendar Logo"
+                sx={{
+                  width: 80,
+                  height: 80,
+                  flexShrink: 0,
+                }}
+              />
+              <Box>
+                <Typography variant="h4" component="h1">
+                  Electricians Work Order Schedule
+                </Typography>
+                <Typography
+                  variant="subtitle1"
+                  color="text.secondary"
+                >
+                  Managing 10 electricians with work orders, vacations, and sick leaves (2024-2026)
+                </Typography>
+              </Box>
             </Box>
             <Stack direction="row" spacing={2}>
               <FormControl sx={{ minWidth: 120 }}>
@@ -223,6 +254,7 @@ function App() {
               }}
               showCurrentTime={true}
               showNavigation={false}
+              currentTimeLineWidth={1}
               locale={locales[selectedLocale]}
               availability={availabilityConfig}
               theme={{
@@ -249,12 +281,81 @@ function App() {
               }}
             >
               <TimelineRowGroup>
+                {/* Notification Row */}
+                <TimelineRow
+                  id="notifications"
+                  label=""
+                  rowCount={1}
+                  collapsible={false}
+                >
+                  <TimelinePinpointGroup clusterSize={32} pinpointLineLength={40} row={0}>
+                    {notificationsData.notifications.map((notification) => {
+                      const typeInfo = notificationTypesMap[notification.type];
+                      const IconComponent = typeInfo.icon;
+                      return (
+                        <TimelinePinpoint
+                          key={notification.id}
+                          id={notification.id}
+                          time={notification.time}
+                          color={typeInfo.color}
+                          size={32}
+                          lineLength={40}
+                          alignment="top"
+                          onClick={(timestamp, data) => {
+                            console.log("Notification clicked:", data);
+                          }}
+                          data={notification}
+                        >
+                          <Tooltip
+                            title={
+                              <Box>
+                                <Typography variant="caption" fontWeight="bold">
+                                  {typeInfo.label}
+                                </Typography>
+                                <Typography variant="caption" display="block">
+                                  {notification.message}
+                                </Typography>
+                              </Box>
+                            }
+                            arrow
+                          >
+                            <Box
+                              sx={{
+                                width: "100%",
+                                height: "100%",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                backgroundColor: typeInfo.color,
+                                borderRadius: "50%",
+                                cursor: "pointer",
+                                "&:hover": {
+                                  transform: "scale(1.1)",
+                                  transition: "transform 0.2s",
+                                },
+                              }}
+                            >
+                              <IconComponent
+                                sx={{
+                                  color: "white",
+                                  fontSize: 18,
+                                }}
+                              />
+                            </Box>
+                          </Tooltip>
+                        </TimelinePinpoint>
+                      );
+                    })}
+                  </TimelinePinpointGroup>
+                </TimelineRow>
+
                 {electriciansData.electricians.map((electrician) => (
                   <TimelineRow
                     key={electrician.id}
                     id={`electrician-${electrician.id}`}
                     label={electrician.name}
                     rowCount={1}
+
                     collapsible={true}
                     defaultExpanded={true}
                     aggregation={{
@@ -275,6 +376,7 @@ function App() {
                             startTime={order.startTime}
                             duration={order.duration}
                             row={0}
+                            draggable={true}
                             type={order.type}
                           >
                             <Box
@@ -377,6 +479,9 @@ function App() {
               <li>33 vacation periods and 16 sick leaves across all staff</li>
               <li>Visual availability hours: 7:00-17:00 on weekdays (Mon-Fri)</li>
               <li>Collapsible rows for each electrician</li>
+              <li>Notification pinpoints: {notificationsData.notifications.length} notifications with 6 different icon types</li>
+              <li>Interactive notifications with tooltips and click events</li>
+              <li>Automatic clustering of notifications when zoomed out</li>
               <li>Dark and light theme support</li>
               <li>Multi-language support (13 languages)</li>
             </Typography>
