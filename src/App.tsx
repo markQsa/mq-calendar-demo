@@ -48,6 +48,7 @@ import type { CalendarLocale } from "mq-timeline-calendar/react";
 import electriciansData from "./electricians-data.json";
 import notificationsData from "./notifications-data.json";
 import logo from "./assets/logo.svg";
+import { addDays } from "date-fns";
 
 // Use built-in locales from the library
 const locales: Record<string, CalendarLocale> = {
@@ -99,8 +100,8 @@ function App() {
   );
 
   // Set up timeline date range - memoized to prevent re-creation on every render
-  const startDate = useMemo(() => new Date(2024, 0, 1), []);
-  const endDate = useMemo(() => new Date(2026, 11, 31), []);
+  const startDate = useMemo(() => addDays(new Date(), -9), []);
+  const endDate = useMemo(() => addDays(new Date(), 1), []);
 
   // Define availability hours: 7:00-17:00 on weekdays (Mon-Fri)
   const availabilityConfig = {
