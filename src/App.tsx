@@ -31,6 +31,7 @@ import {
   TimelineRow,
   TimelinePinpoint,
   TimelinePinpointGroup,
+  useVisibleItems,
   enUS,
   deDE,
   frFR,
@@ -724,6 +725,65 @@ const MetricsDisplay: React.FC<{
   return null;
 };
 
+// Helper component to render electrician row with proper hook usage
+interface ElectricianRowItemsProps {
+  electricianOrders: typeof electriciansData.workOrders;
+  getWorkOrderStyle: (type: string) => { bgcolor: string };
+}
+
+const ElectricianRowItems: React.FC<ElectricianRowItemsProps> = ({
+  electricianOrders,
+  getWorkOrderStyle
+}) => {
+  // CRITICAL: Filter by viewport to only render visible items
+  const visibleOrders = useVisibleItems(electricianOrders);
+
+  return (
+    <>
+      {visibleOrders.map((order) => {
+        const style = getWorkOrderStyle(order.type);
+        return (
+          <TimelineItem
+            key={order.id}
+            startTime={order.startTime}
+            duration={order.duration}
+            row={0}
+            draggable={true}
+          >
+            <Box
+              sx={{
+                bgcolor: style.bgcolor,
+                color: "white",
+                p: 1,
+                borderRadius: 1,
+                overflow: "hidden",
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                cursor: "pointer",
+                "&:hover": {
+                  opacity: 0.9,
+                },
+              }}
+              title={`${order.title}\n${order.location || ""}\n${order.id}`}
+            >
+              <Typography variant="caption" fontWeight="bold" noWrap>
+                {order.title}
+              </Typography>
+              {order.location && (
+                <Typography variant="caption" noWrap sx={{ opacity: 0.9 }}>
+                  {order.location}
+                </Typography>
+              )}
+            </Box>
+          </TimelineItem>
+        );
+      })}
+    </>
+  );
+};
+
 function App() {
   // State for theme mode and selected locale
   const [themeMode, setThemeMode] = useState<PaletteMode>("light");
@@ -929,7 +989,7 @@ function App() {
 
           <Paper
             elevation={themeMode ? 1 : 3}
-            sx={{ mt: 2, p: 0, height: "600px" }}
+            sx={{ mt: 2, p: 0, height: "1200px" }}
           >
             <TimelineCalendar
               startDate={startDate}
@@ -1086,49 +1146,12 @@ function App() {
                     }}
                     getAggregatedTypeStyle={getAggregatedTypeStyle}
                   >
-                    {electriciansData.workOrders
-                      .filter((order) => order.electricianId === electrician.id)
-                      .map((order) => {
-                        const style = getWorkOrderStyle(order.type);
-                        return (
-                          <TimelineItem
-                            key={order.id}
-                            startTime={order.startTime}
-                            duration={order.duration}
-                            row={0}
-                            draggable={true}
-                            type={order.type}
-                          >
-                            <Box
-                              sx={{
-                                bgcolor: style.bgcolor,
-                                color: "white",
-                                p: 1,
-                                borderRadius: 1,
-                                overflow: "hidden",
-                                height: "100%",
-                                display: "flex",
-                                flexDirection: "column",
-                                justifyContent: "center",
-                                cursor: "pointer",
-                                "&:hover": {
-                                  opacity: 0.9,
-                                },
-                              }}
-                              title={`${order.title}\n${order.location || ""}\n${order.id}`}
-                            >
-                              <Typography variant="caption" fontWeight="bold" noWrap>
-                                {order.title}
-                              </Typography>
-                              {order.location && (
-                                <Typography variant="caption" noWrap sx={{ opacity: 0.9 }}>
-                                  {order.location}
-                                </Typography>
-                              )}
-                            </Box>
-                          </TimelineItem>
-                        );
-                      })}
+                    <ElectricianRowItems
+                      electricianOrders={electriciansData.workOrders.filter(
+                        (order) => order.electricianId === electrician.id
+                      )}
+                      getWorkOrderStyle={getWorkOrderStyle}
+                    />
                   </TimelineRow>
                 ))}
               </TimelineRowGroup>
