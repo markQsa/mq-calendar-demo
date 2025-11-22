@@ -1,12 +1,13 @@
-# Row Positioning Bug Fixed ✅
+# Row Positioning Bugs Fixed ✅
 
 ## The Problem
 
-All timeline items were appearing in the first row (notification row) instead of being distributed across their respective electrician rows.
+1. **Timeline Items**: All work orders were appearing in the first row (notification row) instead of their respective electrician rows
+2. **Aggregations**: Aggregated bars were also mispositioned, appearing in wrong rows
 
 ## Root Cause
 
-**Library Bug in `TimelineItem.tsx`**: The `top` position calculation was using absolute row indices instead of being relative to the parent `TimelineRow`.
+**Library Bugs**: Both `TimelineItem.tsx` and `AggregatedView.tsx` were using absolute row indices instead of being relative to the parent `TimelineRow`.
 
 ```typescript
 // BEFORE (Bug):
@@ -38,20 +39,26 @@ Now `row={0}` means:
 ## Changes Made
 
 ### Library (`mq-timeline-calendar`)
+
+#### v0.1.0-beta.36 - TimelineItem Fix
 1. **Fixed**: `src/react/headless/TimelineItem.tsx` line 107-132
-2. **Version**: Updated to `0.1.0-beta.36`
-3. **Published**: Available on npm
+2. **Published**: Available on npm
+
+#### v0.1.0-beta.37 - AggregatedView Fix
+1. **Fixed**: `src/react/headless/AggregatedView.tsx` line 35-45
+2. **Published**: Available on npm
 
 ### Test Project
-1. **Updated**: Package to `mq-timeline-calendar@0.1.0-beta.36`
+1. **Updated**: Package to `mq-timeline-calendar@0.1.0-beta.37`
 2. **Kept**: `row={0}` in `ElectricianRowItems` component (line 750)
 3. **Restarted**: Dev server to pick up the new version
 
 ## Expected Result
 
-Now items should render correctly:
+Now items and aggregations should render correctly:
 - ✅ Notification pinpoints in the notification row
 - ✅ Electrician work orders in their respective electrician rows
+- ✅ Aggregated bars in their correct electrician rows
 - ✅ Items with `row={0}` render in row 0 of their parent container
 
 ## Testing

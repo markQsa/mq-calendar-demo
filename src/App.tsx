@@ -31,7 +31,6 @@ import {
   TimelineRow,
   TimelinePinpoint,
   TimelinePinpointGroup,
-  useVisibleItems,
   enUS,
   deDE,
   frFR,
@@ -725,65 +724,6 @@ const MetricsDisplay: React.FC<{
   return null;
 };
 
-// Helper component to render electrician row with proper hook usage
-interface ElectricianRowItemsProps {
-  electricianOrders: typeof electriciansData.workOrders;
-  getWorkOrderStyle: (type: string) => { bgcolor: string };
-}
-
-const ElectricianRowItems: React.FC<ElectricianRowItemsProps> = ({
-  electricianOrders,
-  getWorkOrderStyle
-}) => {
-  // CRITICAL: Filter by viewport to only render visible items
-  const visibleOrders = useVisibleItems(electricianOrders);
-
-  return (
-    <>
-      {visibleOrders.map((order) => {
-        const style = getWorkOrderStyle(order.type);
-        return (
-          <TimelineItem
-            key={order.id}
-            startTime={order.startTime}
-            duration={order.duration}
-            row={0}
-            draggable={true}
-          >
-            <Box
-              sx={{
-                bgcolor: style.bgcolor,
-                color: "white",
-                p: 1,
-                borderRadius: 1,
-                overflow: "hidden",
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                cursor: "pointer",
-                "&:hover": {
-                  opacity: 0.9,
-                },
-              }}
-              title={`${order.title}\n${order.location || ""}\n${order.id}`}
-            >
-              <Typography variant="caption" fontWeight="bold" noWrap>
-                {order.title}
-              </Typography>
-              {order.location && (
-                <Typography variant="caption" noWrap sx={{ opacity: 0.9 }}>
-                  {order.location}
-                </Typography>
-              )}
-            </Box>
-          </TimelineItem>
-        );
-      })}
-    </>
-  );
-};
-
 function App() {
   // State for theme mode and selected locale
   const [themeMode, setThemeMode] = useState<PaletteMode>("light");
@@ -1027,7 +967,13 @@ function App() {
                 },
               }}
               onViewportChange={(start, end) => {
+                const viewportDuration = end.getTime() - start.getTime();
+                const viewportDays = viewportDuration / (1000 * 60 * 60 * 24);
+                const twoMonthsMs = 60 * 24 * 60 * 60 * 1000; // ~2 months
                 console.log("Viewport changed:", start, end);
+                console.log(`  Duration: ${viewportDays.toFixed(0)} days`);
+                console.log(`  Aggregation will show if: duration > ${(twoMonthsMs / (1000 * 60 * 60 * 24)).toFixed(0)} days AND items >= 50`);
+                console.log(`  Aggregation active:`, viewportDuration > twoMonthsMs);
                 const newZoomLevel = determineZoomLevel(start, end);
                 setZoomLevel(newZoomLevel);
                 setViewportDates({ start, end });
@@ -1105,55 +1051,96 @@ function App() {
                   </TimelinePinpointGroup>
                 </TimelineRow>
 
-                {electriciansData.electricians.map((electrician) => (
-                  <TimelineRow
-                    key={electrician.id}
-                    id={`electrician-${electrician.id}`}
-                    label={
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
-                        <Avatar
-                          sx={{
-                            bgcolor: electrician.color,
-                            color: getContrastColor(electrician.color),
-                            width: 32,
-                            height: 32,
-                            fontSize: '0.875rem',
-                            fontWeight: 600,
-                          }}
-                        >
-                          {getInitials(electrician.name)}
-                        </Avatar>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0, flex: 1 }}>
-                          <Typography variant="body2" sx={{ fontWeight: 600 }}>{electrician.name}</Typography>
-                          <MetricsDisplay
-                            metrics={electricianMetrics.get(electrician.id)}
-                            zoomLevel={zoomLevel}
-                            themeMode={themeMode}
-                            locale={selectedLocale}
-                          />
-                        </Box>
-                      </Box>
-                    }
-                    rowCount={1}
+                {electriciansData.electricians.map((electrician) => {
+                  // Get all orders for this electrician
+                  const electricianOrders = electriciansData.workOrders.filter(
+                    (order) => order.electricianId === electrician.id
+                  );
 
-                    collapsible={true}
-                    defaultExpanded={true}
-                    aggregation={{
-                      enabled: true,
-                      threshold: "2 months",
-                      granularity: "dynamic",
-                      minItemsForAggregation: 50
-                    }}
-                    getAggregatedTypeStyle={getAggregatedTypeStyle}
-                  >
-                    <ElectricianRowItems
-                      electricianOrders={electriciansData.workOrders.filter(
-                        (order) => order.electricianId === electrician.id
-                      )}
-                      getWorkOrderStyle={getWorkOrderStyle}
+                  return (
+                    <TimelineRow
+                      key={electrician.id}
+                      id={`electrician-${electrician.id}`}
+                      label={
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
+                          <Avatar
+                            sx={{
+                              bgcolor: electrician.color,
+                              color: getContrastColor(electrician.color),
+                              width: 32,
+                              height: 32,
+                              fontSize: '0.875rem',
+                              fontWeight: 600,
+                            }}
+                          >
+                            {getInitials(electrician.name)}
+                          </Avatar>
+                          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0, flex: 1 }}>
+                            <Typography variant="body2" sx={{ fontWeight: 600 }}>{electrician.name}</Typography>
+                            <MetricsDisplay
+                              metrics={electricianMetrics.get(electrician.id)}
+                              zoomLevel={zoomLevel}
+                              themeMode={themeMode}
+                              locale={selectedLocale}
+                            />
+                          </Box>
+                        </Box>
+                      }
+                      rowCount={1}
+                      collapsible={true}
+                      defaultExpanded={true}
+                      aggregation={{
+                        enabled: true,
+                        threshold: "2 months",
+                        granularity: "dynamic",
+                        minItemsForAggregation: 50
+                      }}
+                      getAggregatedTypeStyle={getAggregatedTypeStyle}
+                      items={electricianOrders}
+                      renderItem={(order) => {
+                        const style = getWorkOrderStyle(order.type);
+                        return (
+                          <TimelineItem
+                            key={order.id}
+                            startTime={order.startTime}
+                            duration={order.duration}
+                            row={0}
+                            draggable={true}
+                            type={order.type}
+                          >
+                            <Box
+                              sx={{
+                                bgcolor: style.bgcolor,
+                                color: "white",
+                                p: 1,
+                                borderRadius: 1,
+                                overflow: "hidden",
+                                height: "100%",
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "center",
+                                cursor: "pointer",
+                                "&:hover": {
+                                  opacity: 0.9,
+                                },
+                              }}
+                              title={`${order.title}\n${order.location || ""}\n${order.id}`}
+                            >
+                              <Typography variant="caption" fontWeight="bold" noWrap>
+                                {order.title}
+                              </Typography>
+                              {order.location && (
+                                <Typography variant="caption" noWrap sx={{ opacity: 0.9 }}>
+                                  {order.location}
+                                </Typography>
+                              )}
+                            </Box>
+                          </TimelineItem>
+                        );
+                      }}
                     />
-                  </TimelineRow>
-                ))}
+                  );
+                })}
               </TimelineRowGroup>
             </TimelineCalendar>
           </Paper>

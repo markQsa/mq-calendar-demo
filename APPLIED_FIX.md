@@ -1,12 +1,16 @@
 # Fixes Applied ✅
 
-## Latest: Row Positioning Fix (v0.1.0-beta.36)
+## Latest: Row Positioning Fixes (v0.1.0-beta.36 & v0.1.0-beta.37)
 
-**Issue**: All items were appearing in the first row instead of their respective electrician rows.
+**Issues**:
+1. All timeline items appearing in the first row instead of their respective electrician rows
+2. Aggregated bars appearing in wrong rows
 
-**Root Cause**: Library bug - `TimelineItem` calculated `top` position using absolute row indices instead of relative to parent `TimelineRow`.
+**Root Cause**: Library bugs in both `TimelineItem` and `AggregatedView` - they calculated `top` positions using absolute row indices instead of relative to parent `TimelineRow`.
 
-**Fix**: Updated library to account for `rowContext.startRow` when calculating item positions.
+**Fixes**:
+- v0.1.0-beta.36: Fixed `TimelineItem` positioning
+- v0.1.0-beta.37: Fixed `AggregatedView` positioning
 
 See [ROW_POSITIONING_FIX.md](./ROW_POSITIONING_FIX.md) for full details.
 
@@ -16,8 +20,8 @@ See [ROW_POSITIONING_FIX.md](./ROW_POSITIONING_FIX.md) for full details.
 
 ### 1. Updated Package
 ```bash
-npm install mq-timeline-calendar@0.1.0-beta.36
-# Now using version 0.1.0-beta.36
+npm install mq-timeline-calendar@0.1.0-beta.37
+# Now using version 0.1.0-beta.37
 ```
 
 ### 2. Added Hook Import
